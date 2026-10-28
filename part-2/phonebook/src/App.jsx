@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import Filter from './components/Filter'
+import PersonForm from './components/PersonForm'
+import Persons from './components/Persons'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -7,6 +10,7 @@ const App = () => {
     { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
     { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
   ])
+  const [filteredPersons, setFilteredPersons] = useState(persons)
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
@@ -36,32 +40,33 @@ const App = () => {
     // Clear the input fields after adding the person
     setNewName('')
     setNewNumber('')
+    setFilteredPersons(null) // Reset the filtered persons after adding a new person
+  }
+
+  const filterPersons = (event) => {
+    const filter = event.target.value.toLowerCase()
+    const filteredPersons = persons.filter(person =>
+      person.name.toLowerCase().includes(filter)
+    )
+    setFilteredPersons(filteredPersons)
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
-        <div>
-          name: <input onChange={(e) => setNewName(e.target.value)} value={newName} />
-        </div>
-        <div>
-          number: <input onChange={(e) => setNewNumber(e.target.value)} value={newNumber} />
-        </div>
-        <div>
-          <button type="submit" onClick={addPerson}>add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {persons.map((person, i) => <Person key={person.name} person={person} />)}
-    </div>
-  )
-}
+      <Filter filterPersons={filterPersons} />
 
-const Person = ({ person }) => {
-  return (
-    <div>
-      {person.name} {person.number}
+      <h2>add a new</h2>
+      <PersonForm
+        addPerson={addPerson}
+        newName={newName}
+        setNewName={setNewName}
+        newNumber={newNumber}
+        setNewNumber={setNewNumber}
+      />
+
+      <h2>Numbers</h2>
+      <Persons persons={filteredPersons ? filteredPersons : persons} />
     </div>
   )
 }
