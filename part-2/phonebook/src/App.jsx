@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
+
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
@@ -11,12 +12,10 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(data => {
+        setPersons(data)
       })
   }, [])
 
@@ -41,7 +40,13 @@ const App = () => {
     }
 
     // Add the new person to the phonebook
-    setPersons(persons.concat(personObject))
+    personService.create(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+      })
+      .catch(error => {
+        console.error('Error adding person:', error)
+      })
 
     // Clear the input fields after adding the person
     setNewName('')
