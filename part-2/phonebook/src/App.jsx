@@ -36,8 +36,18 @@ const App = () => {
     }
     
     // Check if the name already exists in the phonebook
-    if (persons.some(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+    if (persons.some(person => person.name.toUpperCase() === newName.toUpperCase())) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        // Find the existing person and update their number
+        const existingPerson = persons.find(person => person.name.toUpperCase() === newName.toUpperCase())
+        personService.update(existingPerson.id, { ...existingPerson, number: newNumber })
+          .then(returnedPerson => {
+            setPersons(persons.map(person => person.id === existingPerson.id ? returnedPerson : person))
+          })
+          .catch(error => {
+            console.error('Error updating person:', error)
+          })
+      }
       return
     }
 
