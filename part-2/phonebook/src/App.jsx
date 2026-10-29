@@ -11,6 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
+  // Load the initial list of persons from the server
   useEffect(() => {
     personService
       .getAll()
@@ -19,6 +20,7 @@ const App = () => {
       })
   }, [])
 
+  // Function to add a new person to the phonebook and clear the filter
   const addPerson = (event) => {
     event.preventDefault()
     const personObject = {
@@ -54,6 +56,20 @@ const App = () => {
     setFilteredPersons(null) // Reset the filtered persons after adding a new person
   }
 
+  const deletePerson = (id) => {
+    const personToDelete = persons.find(person => person.id === id)
+    if (window.confirm(`Delete ${personToDelete.name}?`)) {
+      personService.deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+        .catch(error => {
+          console.error('Error deleting person:', error)
+        })
+    }
+  }
+
+  // Function to filter the phonebook list
   const filterPersons = (event) => {
     const filter = event.target.value.toLowerCase()
     const filteredPersons = persons.filter(person =>
@@ -77,7 +93,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Persons persons={filteredPersons ? filteredPersons : persons} />
+      <Persons persons={filteredPersons ? filteredPersons : persons} deletePerson={deletePerson} />
     </div>
   )
 }
