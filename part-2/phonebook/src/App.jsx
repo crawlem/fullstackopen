@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
-
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
@@ -22,6 +21,19 @@ const App = () => {
       })
   }, [])
 
+  const handleError = (error) => {
+    console.error('Error:', error)
+    setNotification({ message: 'An error occurred', type: 'error' })
+  }
+
+  const handleSuccess = (message) => {
+    console.log('Success:', message)
+    setNotification({ message, type: 'success' })
+    setTimeout(() => {
+      setNotification({ message: null, type: null })
+    }, 3000)
+  }
+
   // Function to add a new person to the phonebook and clear the filter
   const addPerson = (event) => {
     event.preventDefault()
@@ -33,8 +45,7 @@ const App = () => {
 
     // Check if name or number is empty
     if (!newName || !newNumber) {
-      // alert('Please fill in both name and number fields')
-      setNotification({ message: 'Please fill in both name and number fields', type: 'error' })
+      handleError('Please fill in both name and number fields')
       return
     }
     
@@ -48,8 +59,7 @@ const App = () => {
             setPersons(persons.map(person => person.id === existingPerson.id ? returnedPerson : person))
           })
           .catch(error => {
-            console.error('Error updating person:', error)
-            setNotification({ message: 'Error updating person', type: 'error' })
+            handleError(error)
           })
       }
       return
@@ -59,14 +69,10 @@ const App = () => {
     personService.create(personObject)
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
-        setNotification({ message: `Added ${returnedPerson.name}`, type: 'success' })
-        setTimeout(() => {
-          setNotification({ message: null, type: null })
-        }, 3000)
+        handleSuccess(`Added ${returnedPerson.name}`)
       })
       .catch(error => {
-        console.error('Error adding person:', error)
-        setNotification({ message: 'Error adding person', type: 'error' })
+        handleError(error)
       })
 
     // Clear the input fields after adding the person
@@ -81,9 +87,10 @@ const App = () => {
       personService.deletePerson(id)
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
+          handleSuccess(`Deleted ${personToDelete.name}`)
         })
         .catch(error => {
-          console.error('Error deleting person:', error)
+          handleError(error)
         })
     }
   }
