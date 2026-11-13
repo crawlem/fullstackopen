@@ -1,4 +1,4 @@
-const ResultList = ({ countries }) => {
+const ResultList = ({ countries, setSelectedCountry }) => {
     if (!countries || countries === null || countries.length <= 1) {
         return null
     }
@@ -15,7 +15,7 @@ const ResultList = ({ countries }) => {
         <section>
             <ul>
                 {countries.map(country => (
-                    <li key={country.cca2}>{country.name.common}</li>
+                    <li key={country.cca2}>{country.name.common} <button onClick={() => setSelectedCountry(country)}>show</button></li>
                 ))}
             </ul>
         </section>

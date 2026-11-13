@@ -31,7 +31,7 @@ function App() {
   return (
     <>
       <Search search={search} setSearch={setSearch} />
-      <ResultList countries={filteredCountries} />
+      <ResultList countries={filteredCountries} setSelectedCountry={setSelectedCountry} />
       <Country country={selectedCountry} />
     </>
   )
