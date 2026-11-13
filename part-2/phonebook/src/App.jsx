@@ -22,7 +22,7 @@ const App = () => {
   }, [])
 
   const handleError = (error) => {
-    console.error('Error:', error)
+    // console.error('Error:', error)
     setNotification({ message: 'An error occurred', type: 'error' })
   }
 
@@ -59,7 +59,12 @@ const App = () => {
             setPersons(persons.map(person => person.id === existingPerson.id ? returnedPerson : person))
           })
           .catch(error => {
-            handleError(error)
+            if (error.response && error.response.status === 404) {
+              setNotification({ message: `Information of ${existingPerson.name} has already been removed from server`, type: 'error' })
+              setPersons(persons.filter(person => person.id !== existingPerson.id))
+            } else {
+              handleError(error)
+            }
           })
       }
       return
