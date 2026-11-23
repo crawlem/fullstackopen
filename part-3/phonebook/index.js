@@ -1,6 +1,9 @@
+const morgan = require('morgan')
 const express = require('express')
 const app = express()
+
 app.use(express.json())
+app.use(morgan('tiny'))
 
 let persons = [
   {
@@ -73,11 +76,10 @@ app.post('/api/persons', (request, response) => {
         name: body.name,
         number: body.number
     }
-    console.log(`Adding new person: ${newPerson.name} with number ${newPerson.number} and id ${newPerson.id}`)
     persons = persons.concat(newPerson)
     response.json(newPerson)
 })
 
 const PORT = 3001
 app.listen(PORT)
-console.log('Phonebook backend running on port %d', PORT)
+console.log('Server running on port %d', PORT)
