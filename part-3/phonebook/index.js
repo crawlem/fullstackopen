@@ -3,7 +3,11 @@ const express = require('express')
 const cors = require('cors')
 
 const app = express()
+
+// Enable CORS for all routes
 app.use(cors())
+
+// Express and Morgan middleware
 app.use(express.json())
 app.use(morgan(function (tokens, req, res) {
   return [
@@ -15,6 +19,9 @@ app.use(morgan(function (tokens, req, res) {
     JSON.stringify(req.body)
   ].join(' ')
 }))
+
+// Enable static file serving for the frontend build
+app.use(express.static('dist'))
 
 let persons = [
   {
