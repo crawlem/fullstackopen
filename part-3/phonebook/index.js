@@ -26,7 +26,7 @@ app.use(morgan(function (tokens, req, res) {
 // Enable static file serving for the frontend build
 app.use(express.static('dist'))
 
-app.get('/info', (request, response) => {
+app.get('/info', (request, response, next) => {
   Person.find()
     .then(persons => {
       const date = new Date()
@@ -35,7 +35,7 @@ app.get('/info', (request, response) => {
     .catch(error => next(error))
 })
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (request, response, next) => {
   Person.find({})
     .then(persons => {
       response.json(persons)
@@ -89,6 +89,26 @@ app.post('/api/persons', (request, response) => {
   newPerson.save().then(savedPerson => {
     response.json(savedPerson)
   })
+})
+
+app.put('/api/persons/:id', (request, response, next) => {
+  const id = request.params.id
+  const body = request.body
+
+  const updatedPerson = {
+    name: body.name,
+    number: body.number
+  }
+
+  Person.findById(id)
+    .then(person => {
+      person.name = updatedPerson.name
+      person.number = updatedPerson.number
+      return person.save().then(savedPerson => {
+        response.json(savedPerson)
+      })
+    })
+    .catch(error => next(error))
 })
 
 const errorHandler = (error, request, response, next) => {
