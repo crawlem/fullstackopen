@@ -23,7 +23,7 @@ const App = () => {
 
   const handleError = (error) => {
     // console.error('Error:', error)
-    setNotification({ message: 'An error occurred', type: 'error' })
+    setNotification({ message: error.message, type: 'error' })
   }
 
   const handleSuccess = (message) => {
